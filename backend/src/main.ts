@@ -3,9 +3,13 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   
-  // Habilitar CORS para todos los orígenes
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://L20660042.github.io',
+    methods: 'GET, POST, PUT, DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
 
   await app.listen(3000);
 }
