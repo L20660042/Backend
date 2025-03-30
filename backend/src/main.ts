@@ -6,7 +6,7 @@ async function bootstrap() {
   
   // Habilitar CORS con el dominio específico de tu frontend
   app.enableCors({
-    origin: 'https://l20660042.github.io/Frontend', // URL de tu frontend
+    origin: 'https://l20660042.github.io', // URL de tu frontend
     methods: 'GET, POST, PUT, DELETE', // Métodos permitidos
     allowedHeaders: 'Content-Type, Authorization', // Encabezados permitidos
   });
