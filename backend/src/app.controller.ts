@@ -7,6 +7,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return this.appService.getHello(); // Usa el servicio para obtener el saludo
   }
 }
