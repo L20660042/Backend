@@ -13,7 +13,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  await app.init();
+  await app.listen(process.env.PORT || 3000);
 }
 
 bootstrap();
