@@ -1,14 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
-
-const server = express();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  const app = await NestFactory.create(AppModule);
+
   app.enableCors({
-    origin: 'https://l20660042.github.io',
+    origin: 'https://l20660042.github.io', // o '*' para pruebas
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
@@ -17,5 +14,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
-export default server;
