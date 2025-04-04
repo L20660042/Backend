@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // 👈 esto importa el .env automáticamente
     
-    MongooseModule.forRoot(process.env.DB_URI),
+    MongooseModule.forRoot('mongodb+srv://tomas:tomas@cluster0.ztveb.mongodb.net/NuevoProyecto'),
     UsersModule,
     AuthModule,
   ],
