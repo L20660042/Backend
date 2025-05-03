@@ -19,7 +19,7 @@ export class EmotionService {
       form.append('image', fs.createReadStream(filePath));
 
       // Llamamos al microservicio de Python
-      const response = await axios.post('http://localhost:5000/analyze', form, {
+      const response = await axios.post('https://iaemocion-production.up.railway.app/analyze', form, {
         headers: form.getHeaders(),
       });
 
