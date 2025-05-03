@@ -5,7 +5,7 @@ import { Document } from 'mongoose';
 export class Analysis extends Document {
   @Prop() user: string;
   @Prop() emotion: string;
-  @Prop() details: Record<string, number>;
+  @Prop({type : Object}) details: Record<string, number>;
   @Prop() date: Date;
 }
 
