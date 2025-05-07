@@ -15,6 +15,6 @@ async function bootstrap() {
     credentials: true, // si usas cookies o auth
   });
   app.use(json({ limit: '10mb' }));
-  await app.listen(3000);
+  await app.listen(8000);
 }
 bootstrap();
