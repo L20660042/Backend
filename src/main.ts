@@ -7,7 +7,10 @@ async function bootstrap() {
   
   // Habilitar CORS para todos los orígenes
   app.enableCors({
-    origin: 'https://l20660042.github.io', // solo permitimos ese dominio 
+    origin: [
+      'https://l20660042.github.io', // frontend
+      'https://iaemocion-production.up.railway.app', // IA backend
+    ],
     methods: 'GET,POST,PUT,DELETE',
     credentials: true, // si usas cookies o auth
   });
