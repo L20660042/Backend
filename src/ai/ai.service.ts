@@ -12,9 +12,22 @@ export class AIService {
       const response = await axios.post(
         'https://api.clarifai.com/v2/models/face-emotion-recognition/outputs',
         {
-          inputs: [{ data: { image: { base64: imageBuffer.toString('base64') } }]
+          inputs: [
+            {
+              data: {
+                image: {
+                  base64: imageBuffer.toString('base64')
+                }
+              }
+            }
+          ]
         },
-        { headers: { 'Authorization': `Key ${apiKey}` } }
+        {
+          headers: {
+            'Authorization': `Key ${apiKey}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
       
       return {
@@ -29,7 +42,7 @@ export class AIService {
   }
 
   async analyzeHandwriting(text: string, username: string) {
-    // Implementación similar usando API de análisis de texto
+    // Implementación similar usando otro modelo de IA
     return {
       user: username,
       sentiment: 'positivo', // Ejemplo
