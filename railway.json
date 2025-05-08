@@ -1,0 +1,24 @@
+{
+    "builds": [
+      {
+        "src": "backend/package.json",
+        "use": "@railway/static-node@latest",
+        "name": "Backend API"
+      },
+      {
+        "src": "ia-service/requirements.txt",
+        "use": "@railway/python@latest",
+        "name": "IA Service"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/api",
+        "dest": "Backend API"
+      },
+      {
+        "src": "/ia",
+        "dest": "IA Service"
+      }
+    ]
+  }
