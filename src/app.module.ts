@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { EmotionAnalysisModule } from './emotion-analysis/emotion-analysis.module';
 
 
 @Module({
@@ -11,7 +12,8 @@ import { AuthModule } from './auth/auth.module';
     
     MongooseModule.forRoot('mongodb+srv://tomas:tomas@cluster0.ztveb.mongodb.net/NuevoProyecto'),
     UsersModule,
-    AuthModule
+    AuthModule,
+    EmotionAnalysisModule
   ],
 })
 export class AppModule {}
