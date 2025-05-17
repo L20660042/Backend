@@ -1,20 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { join } from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  try {
-    console.log('Iniciando app...');
-    const app = await NestFactory.create<NestExpressApplication>(AppModule);
-    app.enableCors({
-      origin: 'https://l20660042.github.io',
-      methods: 'GET,POST,PUT,DELETE',
-      credentials: true,
-    });
-    await app.listen(3000);
-  } catch (err) {
-    console.error('Error al iniciar la app:', err);
-  }
+  const app = await NestFactory.create(AppModule);
+  
+  // Habilitar CORS para todos los orígenes
+  app.enableCors({
+    origin: 'https://l20660042.github.io', // solo permitimos ese dominio 
+    credentials: true, // si usas cookies o auth
+  });
+
+  await app.listen(3000);
 }
 bootstrap();
