@@ -28,7 +28,6 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^9.4.3",
     "@nestjs/serve-static": "^3.0.0",
-    "@nestjs/swagger": "^5.2.1",
     "@nestjs/typeorm": "^10.0.2",
     "@tensorflow/tfjs": "^4.22.0",
     "@types/mathjs": "^9.4.2",
