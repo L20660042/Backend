@@ -6,14 +6,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule); // <- OJO aquí
 
-app.enableCors({
-  origin: [
-    'https://l20660042.github.io',
-    'http://localhost:3000'
-  ],
-  methods: 'GET,POST,PUT,DELETE',
-  credentials: true,
-});
+  app.enableCors({
+    origin: 'https://l20660042.github.io',
+    methods: 'GET,POST,PUT,DELETE',
+    credentials: true,
+  });
+
 
   await app.listen(3000);
 }
