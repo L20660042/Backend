@@ -35,7 +35,7 @@ export class EmotionAnalysisController {
       formData.append('userId', userId);
 
       // ⚠️ Reemplaza con la URL real de tu microservicio en Railway
-      const microserviceUrl = 'microservice-ia-production.up.railway.app';
+      const microserviceUrl = 'https://microservice-ia-production.up.railway.app/';
 
       const response = await axios.post(microserviceUrl, formData, {
         headers: {
