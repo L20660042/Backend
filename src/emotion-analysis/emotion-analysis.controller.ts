@@ -34,7 +34,7 @@ export class EmotionAnalysisController {
       });
       formData.append('userId', userId);
 
-      const microserviceUrl = 'https://microservice-ia-production.up.railway.app';
+      const microserviceUrl = 'https://microservice-ia-production.up.railway.app/analyze';
 
       const response = await axios.post(microserviceUrl, formData, {
         headers: formData.getHeaders(),
