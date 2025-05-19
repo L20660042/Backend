@@ -34,14 +34,11 @@ export class EmotionAnalysisController {
       });
       formData.append('userId', userId);
 
-      // ⚠️ Reemplaza con la URL real de tu microservicio en Railway
-      const microserviceUrl = 'https://microservice-ia-production.up.railway.app/';
+      const microserviceUrl = 'https://microservice-ia-production.up.railway.app';
 
       const response = await axios.post(microserviceUrl, formData, {
-        headers: {
-          ...formData.getHeaders(),
-        },
-        timeout: 30000, // 30 segundos de timeout
+        headers: formData.getHeaders(),
+        timeout: 30000,
       });
 
       if (response.data.success) {
@@ -50,14 +47,13 @@ export class EmotionAnalysisController {
           data: response.data.data,
         };
       } else {
-        throw new HttpException(
-          response.data.message || 'Error en microservicio IA',
-          HttpStatus.BAD_GATEWAY,
-        );
+        throw new HttpException(response.data.message, HttpStatus.BAD_GATEWAY);
       }
     } catch (error) {
-      console.error('Error llamando al microservicio IA:', error.message || error);
-      throw new HttpException('Error al analizar la imagen', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Error al analizar la imagen: ' + error.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
