@@ -1,55 +1,75 @@
-import { Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
-import { Model } from 'mongoose';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 import { EmotionAnalysis } from './schemas/emotion-analysis.schema';
 
 @Injectable()
 export class EmotionAnalysisService {
-  private readonly logger = new Logger(EmotionAnalysisService.name);
-  private readonly EMOTION_SERVICE_URL = process.env.EMOTION_SERVICE_URL || 'https://microservice-ia-production.up.railway.app/';
-
   constructor(
-    @InjectModel(EmotionAnalysis.name) private readonly emotionAnalysisModel: Model<EmotionAnalysis>,
+    @InjectModel(EmotionAnalysis.name) private emotionAnalysisModel: Model<EmotionAnalysis>,
+    private httpService: HttpService,
   ) {}
 
-  async analyzeImage(image: Express.Multer.File, userId: string) {
+  async analyzeImage(file: Express.Multer.File, userId: string) {
     try {
+      // Preparar FormData para enviar al microservicio
       const formData = new FormData();
-      formData.append('file', new Blob([image.buffer]), image.originalname);
+      formData.append('file', new Blob([file.buffer]), file.originalname);
 
-      const response = await axios.post(`${this.EMOTION_SERVICE_URL}/analyze-image`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      // Enviar solicitud al microservicio de Python
+      const response = await firstValueFrom(
+        this.httpService.post(
+          `${process.env.EMOTION_API_URL}/analyze-image`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        ),
+      );
+
+      if (!response.data.success) {
+        throw new HttpException(
+          response.data.error || 'Error al analizar la imagen',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Crear un resumen del análisis
+      const analysisData = response.data.data;
+      const summary = {
+        userId,
+        text: analysisData.text,
+        emotions: analysisData.emotions,
+        dominantEmotion: analysisData.dominant_emotion,
+        // Guardar la URL de la imagen si tienes un servicio de almacenamiento
+        // imageUrl: url,
+      };
 
       // Guardar en MongoDB
-      const analysis = new this.emotionAnalysisModel({
-        userId,
-        text: response.data.text,
-        emotions: response.data.emotions,
-        dominantEmotion: response.data.dominant_emotion,
-        imageUrl: `/uploads/${image.filename}`, // Asume que guardas la imagen
-        createdAt: new Date(),
-      });
-
-      await analysis.save();
+      const newAnalysis = new this.emotionAnalysisModel(summary);
+      const savedAnalysis = await newAnalysis.save();
 
       return {
-        success: true,
-        data: response.data
+        ...response.data,
+        analysisId: savedAnalysis._id,
       };
     } catch (error) {
-      this.logger.error(`Error analyzing image: ${error.message}`);
-      return {
-        success: false,
-        error: error.response?.data?.detail || 'Failed to analyze image'
-      };
+      throw new HttpException(
+        error.message || 'Error al procesar la solicitud',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async getUserAnalyses(userId: string) {
-    return this.emotionAnalysisModel.find({ userId }).sort({ createdAt: -1 }).exec();
+  async getAnalysisHistory(userId: string) {
+    return this.emotionAnalysisModel
+      .find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .exec();
   }
 }

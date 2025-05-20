@@ -14,6 +14,15 @@ export class EmotionAnalysis extends Document {
 
   @Prop({ required: true })
   dominantEmotion: string;
+
+  @Prop()
+  imageUrl?: string;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
 }
 
 export const EmotionAnalysisSchema = SchemaFactory.createForClass(EmotionAnalysis);
