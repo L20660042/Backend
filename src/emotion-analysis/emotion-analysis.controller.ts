@@ -25,4 +25,11 @@ export class EmotionAnalysisController {
   async getHistory(@Query('userId') userId: string) {
     return this.service.getAnalysisHistory(userId || 'default-user-id');
   }
+    @Get('health') // Ruta: GET /emotion-analysis/health
+  healthCheck() {
+    return { 
+      status: 'ok',
+      message: 'Servicio de análisis de emociones funcionando',
+      timestamp: new Date().toISOString()
+    }; }
 }
