@@ -7,7 +7,7 @@ import { EmotionAnalysis } from './schemas/emotion-analysis.schema';
 @Injectable()
 export class EmotionAnalysisService {
   private readonly logger = new Logger(EmotionAnalysisService.name);
-  private readonly EMOTION_SERVICE_URL = process.env.EMOTION_SERVICE_URL || 'http://emotion-service:8000';
+  private readonly EMOTION_SERVICE_URL = process.env.EMOTION_SERVICE_URL || 'https://microservice-ia-production.up.railway.app/';
 
   constructor(
     @InjectModel(EmotionAnalysis.name) private readonly emotionAnalysisModel: Model<EmotionAnalysis>,
