@@ -7,7 +7,10 @@ import { EmotionAnalysis, EmotionAnalysisSchema } from './schemas/emotion-analys
 
 @Module({
   imports: [
-    HttpModule,
+    HttpModule.register({
+      timeout: 30000,
+      maxRedirects: 5,
+    }),
     MongooseModule.forFeature([
       { name: EmotionAnalysis.name, schema: EmotionAnalysisSchema },
     ]),
