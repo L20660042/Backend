@@ -13,51 +13,43 @@ export class EmotionAnalysisService {
     @InjectModel(EmotionAnalysis.name) private readonly emotionAnalysisModel: Model<EmotionAnalysis>,
   ) {}
 
-  async analyzeText(text: string, userId: string) {
+  async analyzeImage(image: Express.Multer.File, userId: string) {
     try {
-      if (!text || text.trim().length === 0) {
-        throw new Error('El texto no puede estar vacío');
-      }
+      const formData = new FormData();
+      formData.append('file', new Blob([image.buffer]), image.originalname);
 
-      // Llamar al microservicio de Python
-      const response = await axios.post(`${this.EMOTION_SERVICE_URL}/analyze`, { 
-        text: text.substring(0, 2000) 
+      const response = await axios.post(`${this.EMOTION_SERVICE_URL}/analyze-image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-      
+
       // Guardar en MongoDB
       const analysis = new this.emotionAnalysisModel({
         userId,
-        text: text.substring(0, 500), // Guardar solo un fragmento
+        text: response.data.text,
         emotions: response.data.emotions,
         dominantEmotion: response.data.dominant_emotion,
+        imageUrl: `/uploads/${image.filename}`, // Asume que guardas la imagen
         createdAt: new Date(),
       });
-      
+
       await analysis.save();
 
       return {
         success: true,
-        data: {
-          emotions: response.data.emotions,
-          dominantEmotion: response.data.dominant_emotion,
-          analysisId: analysis._id,
-          textSample: response.data.text_sample,
-        },
+        data: response.data
       };
     } catch (error) {
-      this.logger.error(`Error analyzing text: ${error.message}`);
+      this.logger.error(`Error analyzing image: ${error.message}`);
       return {
         success: false,
-        error: error.response?.data?.detail || 'Failed to analyze text',
+        error: error.response?.data?.detail || 'Failed to analyze image'
       };
     }
   }
 
-  async getUserAnalyses(userId: string, limit = 10) {
-    return this.emotionAnalysisModel
-      .find({ userId })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .exec();
+  async getUserAnalyses(userId: string) {
+    return this.emotionAnalysisModel.find({ userId }).sort({ createdAt: -1 }).exec();
   }
 }
