@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
+import { EmotionAnalysisService } from './emotion-analysis.service';
 import { EmotionAnalysisController } from './emotion-analysis.controller';
-import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
-  imports: [
-    MulterModule.register({
-      limits: { fileSize: 10 * 1024 * 1024 },
-    }),
-  ],
-  controllers: [EmotionAnalysisController],
+  providers: [EmotionAnalysisService],
+  controllers: [EmotionAnalysisController]
 })
 export class EmotionAnalysisModule {}
