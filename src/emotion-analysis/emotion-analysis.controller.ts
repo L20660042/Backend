@@ -1,4 +1,4 @@
-import { Controller, Post, UploadedFile, UseInterceptors, Query, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, UploadedFile, UseInterceptors, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { EmotionAnalysisService } from './emotion-analysis.service';
 
@@ -19,5 +19,10 @@ export class EmotionAnalysisController {
       );
     }
     return this.service.analyzeImage(file, userId || 'default-user-id');
+  }
+
+  @Get('history') // <-- Nuevo endpoint para historial
+  async getHistory(@Query('userId') userId: string) {
+    return this.service.getAnalysisHistory(userId || 'default-user-id');
   }
 }
