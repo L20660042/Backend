@@ -10,13 +10,21 @@ export class AnalysisService {
     @InjectModel(Analysis.name) private analysisModel: Model<AnalysisDocument>
   ) {}
 
-  async create(data: CreateAnalysisDto): Promise<Analysis> {
+ async create(data: CreateAnalysisDto): Promise<Analysis> {
+  console.log('Datos recibidos para guardar:', data); // ← Agrega este log
+  try {
     const created = new this.analysisModel({
       ...data,
-      date: new Date() // Asigna fecha actual si no viene en el DTO
+      date: new Date()
     });
-    return created.save();
+    const saved = await created.save();
+    console.log('Documento guardado en MongoDB:', saved); // ← Agrega este log
+    return saved;
+  } catch (error) {
+    console.error('Error al guardar en MongoDB:', error);
+    throw error;
   }
+}
 
   async findAll(): Promise<Analysis[]> {
     return this.analysisModel.find().sort({ date: -1 }).limit(10).exec();
@@ -25,4 +33,5 @@ export class AnalysisService {
   async findOne(id: string): Promise<Analysis> {
     return this.analysisModel.findById(id).exec();
   }
+  
 }
