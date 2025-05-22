@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
 import { CreateAnalysisDto } from './dto/create-analysis.dto';
 
@@ -14,5 +14,10 @@ export class AnalysisController {
   @Get('all')
   getAll() {
     return this.analysisService.findAll();
+  }
+
+  @Get(':id')
+  getOne(@Param('id') id: string) {
+    return this.analysisService.findOne(id);
   }
 }

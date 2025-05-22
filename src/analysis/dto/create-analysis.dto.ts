@@ -3,5 +3,5 @@ export class CreateAnalysisDto {
   readonly text: string;
   readonly emotions: Record<string, number>;
   readonly dominantEmotion: string;
-  readonly date: Date;
+  readonly date?: Date;
 }
