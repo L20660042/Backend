@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, Param } from '@nestjs/common';
 import { AnalysisService } from './analysis.service';
 import { CreateAnalysisDto } from './dto/create-analysis.dto';
 
@@ -19,5 +19,10 @@ export class AnalysisController {
   @Get(':id')
   getOne(@Param('id') id: string) {
     return this.analysisService.findOne(id);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.analysisService.delete(id);
   }
 }
