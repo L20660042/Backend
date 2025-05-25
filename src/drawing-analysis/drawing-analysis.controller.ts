@@ -6,7 +6,7 @@ import { CreateDrawingAnalysisDto } from './dto/create-drawing-analysis.dto';
 export class DrawingAnalysisController {
   constructor(private readonly drawingAnalysisService: DrawingAnalysisService) {}
 
-  @Post('save')
+  @Post('save2')
   async save(@Body() createDrawingAnalysisDto: CreateDrawingAnalysisDto) {
     return this.drawingAnalysisService.create(createDrawingAnalysisDto);
   }
