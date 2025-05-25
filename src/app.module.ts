@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AnalysisModule } from './analysis/analysis.module';
+import { DrawingAnalysisModule } from './drawing-analysis/drawing-analysis.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AnalysisModule } from './analysis/analysis.module';
     MongooseModule.forRoot('mongodb+srv://tomas:tomas@cluster0.ztveb.mongodb.net/NuevoProyecto'),
     UsersModule,
     AuthModule,
+    DrawingAnalysisModule,
     AnalysisModule
   ],
 })
