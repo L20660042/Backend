@@ -6,7 +6,10 @@ import { DrawingAnalysis, DrawingAnalysisSchema } from './schemas/drawing-analys
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: DrawingAnalysis.name, schema: DrawingAnalysisSchema }]),
+    MongooseModule.forFeature([
+  { name: DrawingAnalysis.name, schema: DrawingAnalysisSchema },
+])
+
   ],
   controllers: [DrawingAnalysisController],
   providers: [DrawingAnalysisService],
