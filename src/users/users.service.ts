@@ -6,6 +6,8 @@ import * as jwt from 'jsonwebtoken';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
+import { BadRequestException } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
@@ -52,6 +54,7 @@ export class UsersService {
       role: user.rol, // Regresamos el rol para redirigir al frontend
     };
   }
+
   async getUserById(userId: string): Promise<User> {
     return this.userModel.findById(userId).select('-pase'); // Excluye la contraseña
   }
@@ -70,4 +73,38 @@ export class UsersService {
   async getAllUsers(): Promise<User[]> {
     return this.userModel.find().select('-pase'); // Excluir contraseña
   }  
+  async requestPasswordReset(email: string): Promise<void> {
+    const user = await this.userModel.findOne({ correo: email });
+    if (!user) {
+      // Avoid info leak — just return silently
+      return;
+    }
+
+    const token = uuidv4();
+    const expiry = new Date(Date.now() + 3600 * 1000); // 1 hour expiry
+
+    user.resetToken = token;
+    user.resetTokenExpiry = expiry;
+
+    await user.save();
+
+    // TODO: Send email with link including token (your frontend URL)
+    console.log(`Password reset link: https://l20660042.github.io/Frontend/reset-password?token=${token}`);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const user = await this.userModel.findOne({ resetToken: token });
+
+    if (!user || !user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
+      throw new BadRequestException('Token inválido o expirado.');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.pase = hashedPassword;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+
+    await user.save();
+  }
 }

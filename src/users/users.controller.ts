@@ -16,6 +16,18 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Post('request-password-reset')
+  async requestPasswordReset(@Body('email') email: string) {
+    await this.usersService.requestPasswordReset(email);
+    return { message: 'Si el correo existe, recibirás instrucciones para restablecer la contraseña.' };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { token: string; newPassword: string }) {
+    await this.usersService.resetPassword(body.token, body.newPassword);
+    return { message: 'Contraseña restablecida correctamente.' };
+  }
+
   // Ruta para hacer login de usuario
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
