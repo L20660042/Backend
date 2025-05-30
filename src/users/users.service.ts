@@ -99,7 +99,7 @@ export class UsersService {
         this.configService.get<string>('FRONTEND_URL') ||
         process.env.FRONTEND_URL ||
         'https://l20660042.github.io/Frontend';
-      const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
+      const resetUrl = `${frontendUrl}/#/reset-password?token=${token}`;
 
       const mailOptions = {
         from: `"Tu App" <${this.configService.get<string>('SMTP_USER') || process.env.SMTP_USER}>`,
