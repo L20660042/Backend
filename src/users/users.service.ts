@@ -102,7 +102,7 @@ export class UsersService {
       const resetUrl = `${frontendUrl}/#/reset-password?token=${token}`;
 
       const mailOptions = {
-        from: `"Tu App" <${this.configService.get<string>('SMTP_USER') || process.env.SMTP_USER}>`,
+        from: `"EmoTrazos" <${this.configService.get<string>('SMTP_USER') || process.env.SMTP_USER}>`,
         to: email,
         subject: 'Restablece tu contraseña',
         html: `
