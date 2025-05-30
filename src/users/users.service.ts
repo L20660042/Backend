@@ -20,52 +20,53 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private configService: ConfigService,
   ) {
-    // Log SMTP_HOST on startup to verify env loading
-    const smtpHost = this.configService.get<string>('SMTP_HOST');
+    // Get SMTP config from ConfigService or fallback to process.env directly
+    const smtpHost =
+      this.configService.get<string>('SMTP_HOST') || process.env.SMTP_HOST || 'smtp.gmail.com';
+    const smtpPort =
+      Number(this.configService.get<number>('SMTP_PORT')) || Number(process.env.SMTP_PORT) || 587;
+    const smtpUser =
+      this.configService.get<string>('SMTP_USER') || process.env.SMTP_USER || '';
+    const smtpPass =
+      this.configService.get<string>('SMTP_PASS') || process.env.SMTP_PASS || '';
+
     this.logger.log(`SMTP_HOST on startup: ${smtpHost}`);
 
     this.transporter = nodemailer.createTransport({
       host: smtpHost,
-      port: Number(this.configService.get<number>('SMTP_PORT')),
-      secure: false, // Usually false for port 587
+      port: smtpPort,
+      secure: false, // 587 is usually false
       auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASS'),
+        user: smtpUser,
+        pass: smtpPass,
       },
     });
-    this.logger.log(`SMTP transporter initialized for user: ${this.configService.get<string>('SMTP_USER')}`);
+    this.logger.log(`SMTP transporter initialized for user: ${smtpUser}`);
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { pase, ...rest } = createUserDto;
-
     const hashedPassword = await bcrypt.hash(pase, 10);
-
     const createdUser = new this.userModel({
       ...rest,
       pase: hashedPassword,
     });
-
     return createdUser.save();
   }
 
   async login(loginDto: LoginDto): Promise<{ message: string; token: string; role: string }> {
     const { correo, pase } = loginDto;
-
     const user = await this.userModel.findOne({ correo }).exec();
     if (!user) {
       throw new BadRequestException('Correo electrónico o contraseña incorrectos');
     }
-
     const isPasswordValid = await bcrypt.compare(pase, user.pase);
     if (!isPasswordValid) {
       throw new BadRequestException('Correo electrónico o contraseña incorrectos');
     }
-
     const payload = { userId: user._id, role: user.rol };
-    const secret = this.configService.get<string>('JWT_SECRET') || 'tu_secreto';
+    const secret = this.configService.get<string>('JWT_SECRET') || process.env.JWT_SECRET || 'tu_secreto';
     const token = jwt.sign(payload, secret, { expiresIn: '1h' });
-
     return {
       message: 'Inicio de sesión exitoso',
       token,
@@ -94,11 +95,14 @@ export class UsersService {
 
   private async sendResetEmail(email: string, token: string) {
     try {
-      const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'https://l20660042.github.io/Frontend';
+      const frontendUrl =
+        this.configService.get<string>('FRONTEND_URL') ||
+        process.env.FRONTEND_URL ||
+        'https://l20660042.github.io/Frontend';
       const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
       const mailOptions = {
-        from: `"Tu App" <${this.configService.get<string>('SMTP_USER')}>`,
+        from: `"Tu App" <${this.configService.get<string>('SMTP_USER') || process.env.SMTP_USER}>`,
         to: email,
         subject: 'Restablece tu contraseña',
         html: `
@@ -113,7 +117,7 @@ export class UsersService {
       this.logger.log(`Correo de restablecimiento enviado a ${email}`);
     } catch (error) {
       this.logger.error('Error enviando correo de restablecimiento:', error);
-      console.log('SMTP_HOST:', this.configService.get<string>('SMTP_HOST'));
+      console.log('SMTP_HOST:', this.configService.get<string>('SMTP_HOST') || process.env.SMTP_HOST);
       throw new InternalServerErrorException('No se pudo enviar el correo de restablecimiento');
     }
   }
@@ -142,10 +146,12 @@ export class UsersService {
         throw new BadRequestException('Token y nueva contraseña son requeridos');
       }
 
-      const user = await this.userModel.findOne({
-        resetToken: token,
-        resetTokenExpiry: { $gt: new Date() },
-      }).exec();
+      const user = await this.userModel
+        .findOne({
+          resetToken: token,
+          resetTokenExpiry: { $gt: new Date() },
+        })
+        .exec();
 
       if (!user) {
         throw new BadRequestException('Token inválido o expirado');
