@@ -108,7 +108,7 @@ export class UsersService {
       this.logger.log(`Correo de restablecimiento enviado a ${email}`);
     } catch (error) {
       this.logger.error('Error enviando correo de restablecimiento:', error);
-      console.error('Detalle completo del error SMTP:', error);
+      console.log('SMTP_HOST:', this.configService.get<string>('SMTP_HOST'));
       throw new InternalServerErrorException('No se pudo enviar el correo de restablecimiento');
 }
   }
