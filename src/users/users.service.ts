@@ -20,8 +20,12 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private configService: ConfigService,
   ) {
+    // Log SMTP_HOST on startup to verify env loading
+    const smtpHost = this.configService.get<string>('SMTP_HOST');
+    this.logger.log(`SMTP_HOST on startup: ${smtpHost}`);
+
     this.transporter = nodemailer.createTransport({
-      host: this.configService.get<string>('SMTP_HOST'),
+      host: smtpHost,
       port: Number(this.configService.get<number>('SMTP_PORT')),
       secure: false, // Usually false for port 587
       auth: {
@@ -90,7 +94,8 @@ export class UsersService {
 
   private async sendResetEmail(email: string, token: string) {
     try {
-      const resetUrl = `${this.configService.get<string>('FRONTEND_URL') || 'https://l20660042.github.io/Frontend'}/reset-password?token=${token}`;
+      const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'https://l20660042.github.io/Frontend';
+      const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
       const mailOptions = {
         from: `"Tu App" <${this.configService.get<string>('SMTP_USER')}>`,
@@ -110,7 +115,7 @@ export class UsersService {
       this.logger.error('Error enviando correo de restablecimiento:', error);
       console.log('SMTP_HOST:', this.configService.get<string>('SMTP_HOST'));
       throw new InternalServerErrorException('No se pudo enviar el correo de restablecimiento');
-}
+    }
   }
 
   async requestPasswordReset(email: string): Promise<void> {

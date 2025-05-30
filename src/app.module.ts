@@ -8,7 +8,7 @@ import { DrawingAnalysisModule } from './drawing-analysis/drawing-analysis.modul
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true,envFilePath: '.env' }),
     
     MongooseModule.forRoot('mongodb+srv://tomas:tomas@cluster0.ztveb.mongodb.net/NuevoProyecto'),
     UsersModule,
