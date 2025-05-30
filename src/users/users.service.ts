@@ -90,7 +90,7 @@ export class UsersService {
 
   private async sendResetEmail(email: string, token: string) {
     try {
-      const resetUrl = `${this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000'}/reset-password?token=${token}`;
+      const resetUrl = `${this.configService.get<string>('FRONTEND_URL') || 'https://l20660042.github.io/Frontend'}/reset-password?token=${token}`;
 
       const mailOptions = {
         from: `"Tu App" <${this.configService.get<string>('SMTP_USER')}>`,
@@ -103,6 +103,7 @@ export class UsersService {
         `,
       };
 
+      this.logger.log('Sending reset email with options:', mailOptions);
       await this.transporter.sendMail(mailOptions);
       this.logger.log(`Correo de restablecimiento enviado a ${email}`);
     } catch (error) {
