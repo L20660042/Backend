@@ -108,8 +108,9 @@ export class UsersService {
       this.logger.log(`Correo de restablecimiento enviado a ${email}`);
     } catch (error) {
       this.logger.error('Error enviando correo de restablecimiento:', error);
+      console.error('Detalle completo del error SMTP:', error);  // <--- Add this line for full error print
       throw new InternalServerErrorException('No se pudo enviar el correo de restablecimiento');
-    }
+}
   }
 
   async requestPasswordReset(email: string): Promise<void> {
