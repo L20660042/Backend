@@ -26,7 +26,7 @@ export class User extends Document {
 
   @Prop({ type: Date, default: null })
   resetTokenExpiry?: Date;
-
 }
 
+export type UserDocument = User & Document;
 export const UserSchema = SchemaFactory.createForClass(User);
