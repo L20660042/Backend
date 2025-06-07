@@ -9,6 +9,7 @@ async function bootstrap() {
   // Habilitar CORS para todos los orígenes
   app.enableCors({
     origin: 'https://l20660042.github.io', // solo permitimos ese dominio 
+     methods: ['GET', 'POST', 'PUT'],
     credentials: true, // si usas cookies o auth
   });
 
