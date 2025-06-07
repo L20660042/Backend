@@ -23,8 +23,15 @@ export class UsersController {
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  try {
+    const user = await this.usersService.create(createUserDto);
+    return user;
+  } catch (error) {
+    console.error('Error al registrar usuario:', error);
+    throw new InternalServerErrorException('Error al registrar el usuario');
   }
+}
+
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
