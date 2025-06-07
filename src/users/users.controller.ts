@@ -23,15 +23,14 @@ export class UsersController {
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-  try {
-    const user = await this.usersService.create(createUserDto);
-    return user;
-  } catch (error) {
-    console.error('Error al registrar usuario:', error);
-    throw new InternalServerErrorException('Error al registrar el usuario');
-  }
-}
+    const { rol } = createUserDto;
 
+    if (!rol || !['USUARIO', 'ADMIN'].includes(rol)) {
+      throw new BadRequestException('El rol debe ser "USUARIO" o "ADMIN"');
+    }
+
+    return this.usersService.create(createUserDto);
+  }
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
